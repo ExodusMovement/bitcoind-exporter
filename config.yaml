@@ -1,0 +1,10 @@
+port: 8000
+hostname: 127.0.0.1
+
+processMetrics: false
+
+interval: 100 # in ms
+nodes:
+  - name: btc1
+    type: bitcoin
+    url: http://bitcoinrpc:password@localhost:8332/

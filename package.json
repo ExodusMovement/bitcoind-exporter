@@ -1,0 +1,36 @@
+{
+  "name": "bitcoind-exporter",
+  "version": "0.0.1",
+  "description": "Bitcoind exporter for Prometheus",
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/exodusmovement/bitcoind-exporter/issues"
+  },
+  "license": "MIT",
+  "files": [
+    "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/exodusmovement/bitcoind-exporter.git"
+  },
+  "scripts": {
+    "lint": "standard",
+    "test": "npm run lint"
+  },
+  "dependencies": {
+    "js-yaml": "^3.12.0",
+    "node-fetch": "^2.1.2",
+    "polka": "^0.4.0",
+    "prom-client2": "fanatid/prom-client2#30c47bd2092c933c261defdc9384f26a73f38e9a",
+    "winston": "^3.0.0",
+    "yargs": "^12.0.1"
+  },
+  "devDependencies": {
+    "standard": "^11.0.1"
+  },
+  "engines": {
+    "node": ">=10.4.1"
+  },
+  "private": true
+}

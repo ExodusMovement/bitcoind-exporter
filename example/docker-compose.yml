@@ -1,0 +1,65 @@
+version: '3'
+
+volumes:
+  bitcoind: {}
+  prometheus: {}
+  grafana: {}
+
+services:
+  bitcoind:
+    image: exodusmovement/bitcoind:0.16.2-003
+    container_name: bitcoind
+    volumes:
+      - bitcoind:/home/bitcoind/.bitcoin
+      - ./bitcoind/bitcoin.conf:/home/bitcoind/.bitcoin/bitcoin.conf
+    command: >
+      -disablewallet
+      -printtoconsole
+      -server
+      -rpcallowip=0.0.0.0/0
+      -rpcbind=0.0.0.0
+    ports:
+      - 8332:8332
+
+  bitcoind-exporter:
+    build:
+      context: ../
+    container_name: bitcoind-exporter
+    depends_on:
+      - bitcoind
+    volumes:
+      - ./bitcoind-exporter/config.yaml:/home/node/bitcoind-exporter/config.yaml
+    command: >
+      --config config.yaml
+    ports:
+      - 8000:8000
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:v2.1.0
+    container_name: prometheus
+    depends_on:
+      - bitcoind-exporter
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana:5.2.1
+    container_name: grafana
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - 3000:3000
+    env_file:
+      - ./grafana/config.monitoring

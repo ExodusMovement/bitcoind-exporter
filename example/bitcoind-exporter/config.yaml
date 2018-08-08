@@ -1,0 +1,7 @@
+port: 8000
+
+interval: 100 # in ms
+nodes:
+  - name: btc1
+    type: bitcoin
+    url: http://bitcoinrpc:password@bitcoind:8332/
