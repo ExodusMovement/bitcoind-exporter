@@ -1,6 +1,6 @@
 {
   "name": "bitcoind-exporter",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Bitcoind exporter for Prometheus",
   "keywords": [],
   "bugs": {
