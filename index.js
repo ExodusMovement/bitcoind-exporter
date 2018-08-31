@@ -3,7 +3,8 @@ const fetch = require('node-fetch')
 const polka = require('polka')
 const yargs = require('yargs')
 const winston = require('winston')
-const { Registry, Gauge } = require('prom-client2')
+const { Registry, Gauge } = require('prom-client')
+const { hashObject } = require('prom-client/lib/util')
 
 const logger = winston.createLogger({
   format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
@@ -120,31 +121,31 @@ function initParityMetrics (registry, nodeType, nodeURL) {
 
     // version
     if (networkInfo.subversion !== data.version) {
-      gauges.version.labels({ value: networkInfo.subversion }).set(1)
+      gauges.version.set({ value: networkInfo.subversion }, 1)
       data.version = networkInfo.subversion
-      logger.info(`Update version to ${networkInfo.subversion}`)
+      logger.info(`update version to ${networkInfo.subversion}`)
     }
 
     // latest
     if (data.latest !== blockchainInfo.bestblockhash) {
-      if (data.latest) gauges.latest.hash.remove({ hash: data.latest })
-      gauges.latest.hash.labels({ hash: blockchainInfo.bestblockhash }).set(blockchainInfo.blocks)
+      if (data.latest) delete gauges.latest.hash.hashMap[hashObject({ hash: data.latest })]
+      gauges.latest.hash.set({ hash: blockchainInfo.bestblockhash }, blockchainInfo.blocks)
       data.latest = blockchainInfo.bestblockhash
-      logger.info(`Update latest to ${blockchainInfo.blocks}:${blockchainInfo.bestblockhash}`)
+      logger.info(`update latest to ${blockchainInfo.blocks}:${blockchainInfo.bestblockhash}`)
 
-      gauges.latest.sync.labels({ type: 'blocks' }).set(blockchainInfo.blocks)
-      gauges.latest.sync.labels({ type: 'headers' }).set(blockchainInfo.headers)
-      gauges.latest.sync.labels({ type: 'progress' }).set(parseFloat((blockchainInfo.blocks * 100 / blockchainInfo.headers).toFixed(3)))
+      gauges.latest.sync.set({ type: 'blocks' }, blockchainInfo.blocks)
+      gauges.latest.sync.set({ type: 'headers' }, blockchainInfo.headers)
+      gauges.latest.sync.set({ type: 'progress' }, parseFloat((blockchainInfo.blocks * 100 / blockchainInfo.headers).toFixed(3)))
     }
     gauges.latest.size.set(blockchainInfo.size_on_disk || 0)
 
     // mempool
-    gauges.mempool.labels({ type: 'size' }).set(mempoolInfo.size)
-    gauges.mempool.labels({ type: 'bytes' }).set(mempoolInfo.bytes)
+    gauges.mempool.set({ type: 'size' }, mempoolInfo.size)
+    gauges.mempool.set({ type: 'bytes' }, mempoolInfo.bytes)
 
     // fee
     for (const item of feeItems) {
-      gauges.fee.labels({ target: item.target, mode: item.mode }).set(item.value)
+      gauges.fee.set({ target: item.target, mode: item.mode }, item.value)
     }
 
     // peers
@@ -152,8 +153,8 @@ function initParityMetrics (registry, nodeType, nodeURL) {
     data.peers.set('all', peerInfo.length)
     for (const peer of peerInfo) data.peers.set(peer.subver, (data.peers.get(peer.subver) || 0) + 1)
     for (const [version, value] of data.peers.entries()) {
-      if (value === 0) gauges.peers.remove({ version })
-      else gauges.peers.labels({ version }).set(value)
+      if (value === 0 && version !== 'all') delete gauges.peers.hashMap[hashObject({ version })]
+      else gauges.peers.set({ version }, value)
     }
   }
 
@@ -168,7 +169,10 @@ function initParityMetrics (registry, nodeType, nodeURL) {
         'Loading P2P addresses'
       ]
       for (const item of skip) {
-        if (err.message.match(item)) return
+        if (err.message.match(item)) {
+          logger.info(`waiting node because: ${item.toLowerCase()}`)
+          return
+        }
       }
 
       throw err
@@ -182,7 +186,7 @@ function createPrometheusClient (args) {
     update: initParityMetrics(register, args.type, args.node),
     onRequest (req, res) {
       res.setHeader('Content-Type', register.contentType)
-      res.end(register.exposeText())
+      res.end(register.metrics())
     }
   }
 }
