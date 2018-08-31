@@ -1,6 +1,4 @@
 # Bitcoind exporter for Prometheus
-[![Docker Stars](https://img.shields.io/docker/stars/exodusmovement/bitcoind-exporter.svg?style=flat-square)](https://hub.docker.com/r/exodusmovement/bitcoind-exporter/)
-[![Docker Pulls](https://img.shields.io/docker/pulls/exodusmovement/bitcoind-exporter.svg?style=flat-square)](https://hub.docker.com/r/exodusmovement/bitcoind-exporter/)
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
@@ -52,7 +50,12 @@ bitcoind_peers{version="/Satoshi:0.14.2/"} 1
 Usage:
 
 ```
-docker run -p 8000:8000 -e BITCOIND_EXPORTER=0.0.0.0:8000 exodusmovement/bitcoind-exporter
+docker run \
+  -p 8000:8000 \
+  -e BITCOIND_EXPORTER_LISTEN=0.0.0.0:8000 \
+  -e BITCOIND_EXPORTER_NODE=http://bitcoinrpc:password@bitcoind:8332/ \
+  -e BITCOIND_EXPORTER_TYPE=bitcoin
+  exodusmovement/bitcoind-exporter
 ```
 
 ### LICENSE
