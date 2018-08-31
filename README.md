@@ -55,7 +55,7 @@ docker run \
   -e BITCOIND_EXPORTER_LISTEN=0.0.0.0:8000 \
   -e BITCOIND_EXPORTER_NODE=http://bitcoinrpc:password@bitcoind:8332/ \
   -e BITCOIND_EXPORTER_TYPE=bitcoin
-  exodusmovement/bitcoind-exporter
+  quay.io/exodusmovement/bitcoind-exporter
 ```
 
 ### LICENSE
