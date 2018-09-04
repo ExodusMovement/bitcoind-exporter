@@ -17,7 +17,7 @@ bitcoind_blockchain_latest{hash="00000000000000000029904e7ae7eeffaf46b9b2a6b623a
 # TYPE bitcoind_blockchain_sync gauge
 bitcoind_blockchain_sync{type="blocks"} 536574
 bitcoind_blockchain_sync{type="headers"} 536574
-bitcoind_blockchain_sync{type="progress"} 100
+bitcoind_blockchain_sync{type="progress"} 1
 
 # HELP bitcoind_blockchain_size_bytes Blockchain size on disk
 # TYPE bitcoind_blockchain_size_bytes gauge
