@@ -29,9 +29,21 @@ function getArgs () {
       describe: 'Fetch info from this node'
     })
     .option('type', {
+      choices: [
+        'bitcoin',
+        'bitcoincash',
+        'bitcoingold',
+        'dash',
+        'decred',
+        'digibyte',
+        'dogecoin',
+        'litecoin',
+        'qtum',
+        'vertcoin',
+        'zcash'
+      ],
       default: 'bitcoin',
-      describe: 'Type of bitcoin-like coin',
-      type: 'string'
+      describe: 'Type of bitcoin-like coin'
     })
     .version()
     .help('help').alias('help', 'h')
