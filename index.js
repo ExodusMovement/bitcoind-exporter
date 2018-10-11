@@ -2,14 +2,9 @@
 const fetch = require('node-fetch')
 const polka = require('polka')
 const yargs = require('yargs')
-const winston = require('winston')
+const logger = require('log2json2stdout')
 const { Registry, Gauge } = require('prom-client')
 const { hashObject } = require('prom-client/lib/util')
-
-const logger = winston.createLogger({
-  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
-  transports: [new winston.transports.Console()]
-})
 
 function getArgs () {
   return yargs
@@ -209,6 +204,6 @@ async function main () {
 }
 
 main().catch((err) => {
-  logger.error(String(err.stack || err))
+  logger.error({ message: err.message, stack: err.stack })
   process.exit(1)
 })
