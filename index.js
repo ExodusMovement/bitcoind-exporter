@@ -77,7 +77,13 @@ async function getEstimateFee (type, url) {
   if (['dogecoin', 'zcash'].includes(type)) return []
 
   async function process (target, mode) {
-    const obj = await makeRequest(url, 'estimatesmartfee', target, mode)
+    let obj = {}
+    if (['dash'].includes(type)) { // no mode
+      obj = await makeRequest(url, 'estimatesmartfee', target)
+    } else {
+      obj = await makeRequest(url, 'estimatesmartfee', target, mode)
+    }
+
     return { target, mode, value: obj.feerate }
   }
 
@@ -173,7 +179,14 @@ function initParityMetrics (registry, nodeType, nodeURL) {
         'Loading block index',
         'Rewinding blocks',
         'Verifying blocks',
-        'Loading P2P addresses'
+        'Loading P2P addresses',
+        // dash specific
+        'Loading masternode cache',
+        'Loading masternode payment cache',
+        'Loading governance cache',
+        'Masternode cache is empty, skipping payments and governance cache',
+        'Loading fulfilled requests cache',
+        'Loading addresses' // also zcash
       ]
       for (const item of skip) {
         if (err.message.match(item)) {
