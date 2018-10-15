@@ -47,7 +47,7 @@ bitcoind_peers{version="/Satoshi:0.13.2/"} 1
 bitcoind_peers{version="/Satoshi:0.14.2/"} 1
 ```
 
-Usage:
+## Usage:
 
 ```
 docker run \
@@ -57,6 +57,19 @@ docker run \
   -e BITCOIND_EXPORTER_TYPE=bitcoin
   quay.io/exodusmovement/bitcoind-exporter
 ```
+
+### Support
+
+- [x] bitcoin
+- [x] bitcoincash
+- [x] bitcoingold
+- [x] dash
+- [x] digibyte
+- [x] dogecoin
+- [x] litecoin
+- [x] qtum
+- [x] vertcoin
+- [x] zcash
 
 ### LICENSE
 
