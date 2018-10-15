@@ -148,7 +148,7 @@ function initParityMetrics (registry, nodeType, nodeURL) {
 
       gauges.latest.sync.set({ type: 'blocks' }, blockchainInfo.blocks)
       gauges.latest.sync.set({ type: 'headers' }, blockchainInfo.headers)
-      gauges.latest.sync.set({ type: 'progress' }, parseFloat((blockchainInfo.blocks / blockchainInfo.headers).toFixed(5)))
+      gauges.latest.sync.set({ type: 'progress' }, parseFloat((blockchainInfo.blocks / blockchainInfo.headers).toFixed(5)) || 0)
     }
     gauges.latest.size.set(blockchainInfo.size_on_disk || 0)
 
