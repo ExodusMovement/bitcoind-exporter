@@ -73,8 +73,8 @@ async function makeRequest (url, method, ...params) {
 
 async function getEstimateFee (type, url) {
   // ok: bitcoin, dash, litecoin, vertcoin
-  // not ok: dogecoin, zcash
-  if (['dogecoin', 'zcash'].includes(type)) return []
+  // not ok:
+  if (['dogecoin', 'zcash', 'bitcoincash'].includes(type)) return []
 
   async function process (target, mode) {
     let obj = {}
