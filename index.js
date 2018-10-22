@@ -186,7 +186,9 @@ function initParityMetrics (registry, nodeType, nodeURL) {
         'Loading governance cache',
         'Masternode cache is empty, skipping payments and governance cache',
         'Loading fulfilled requests cache',
-        'Loading addresses' // also zcash
+        'Loading addresses', // also zcash
+        // dogecoin specific
+        'Activating best chain'
       ]
       for (const item of skip) {
         if (err.message.match(item)) {
