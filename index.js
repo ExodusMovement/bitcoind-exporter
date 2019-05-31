@@ -5,6 +5,7 @@ const yargs = require('yargs')
 const logger = require('log2json2stdout')
 const { Registry, Gauge } = require('prom-client')
 const { hashObject } = require('prom-client/lib/util')
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 function getArgs () {
   return yargs
@@ -13,6 +14,11 @@ function getArgs () {
     .option('interval', {
       default: 100,
       describe: 'Metrics fetch interval',
+      type: 'number'
+    })
+    .option('delay', {
+      default: 0,
+      describe: 'Start delay',
       type: 'number'
     })
     .option('listen', {
@@ -225,9 +231,10 @@ async function main () {
 
   while (true) {
     const ts = Date.now()
+    await delay(args.delay) // start delay
     await promClient.update()
-    const delay = Math.max(10, args.interval - (Date.now() - ts))
-    await new Promise((resolve) => setTimeout(resolve, delay))
+    const interval = Math.max(10, args.interval - (Date.now() - ts))
+    await delay(interval)
   }
 }
 
