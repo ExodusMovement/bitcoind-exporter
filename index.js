@@ -107,19 +107,21 @@ function initParityMetrics (registry, nodeType, nodeURL) {
   const createGauge = (name, help, labelNames) => new Gauge({ name, help, labelNames, registers: [registry] })
 
   const gauges = {
-    version: createGauge('bitcoind_version', 'Client version', ['value']),
+    version: createGauge('client_version', 'Client version', ['value']),
+    chain: createGauge('client_chain', 'Client chain', ['value']),
     latest: {
-      hash: createGauge('bitcoind_blockchain_latest', 'Latest block information', ['hash']),
-      sync: createGauge('bitcoind_blockchain_sync', 'Blockchain sync info', ['type']),
-      size: createGauge('bitcoind_blockchain_size_bytes', 'Blockchain size on disk', [])
+      hash: createGauge('client_blockchain_latest', 'Latest block information', ['hash']),
+      sync: createGauge('client_blockchain_sync', 'Blockchain sync info', ['type']),
+      size: createGauge('client_blockchain_size_bytes', 'Blockchain size on disk', [])
     },
-    mempool: createGauge('bitcoind_mempool_size', 'Mempool information', ['type']),
-    fee: createGauge('bitcoind_fee', 'Approximate fee per kilobyte by estimatesmartfee method', ['target', 'mode']),
-    peers: createGauge('bitcoind_peers', 'Connected peers', ['version'])
+    mempool: createGauge('client_mempool_size', 'Mempool information', ['type']),
+    fee: createGauge('client_fee', 'Approximate fee per kilobyte by estimatesmartfee method', ['target', 'mode']),
+    peers: createGauge('client_peers', 'Connected peers', ['version'])
   }
 
   const data = {
     version: '',
+    chain: '',
     latest: '',
     peers: new Map([['all', 0]])
   }
@@ -144,6 +146,13 @@ function initParityMetrics (registry, nodeType, nodeURL) {
       gauges.version.set({ value: networkInfo.subversion }, 1)
       data.version = networkInfo.subversion
       logger.info(`update version to ${networkInfo.subversion}`)
+    }
+
+    // chain
+    if (blockchainInfo.chain !== data.chain) {
+      gauges.chain.set({ value: blockchainInfo.chain }, 1)
+      data.chain = blockchainInfo.chain
+      logger.info(`update chain to ${blockchainInfo.chain}`)
     }
 
     // latest
